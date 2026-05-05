@@ -15,13 +15,13 @@ type Curso = {
   precio: string;
   link_pago: string;
   url_pdf: string;
-  temario: string; // NUEVO CAMPO
+  temario: string;
 };
 
 export default function Home() {
   const [cursos, setCursos] = useState<Curso[]>([]);
   const [loading, setLoading] = useState(true);
-  const [openTemario, setOpenTemario] = useState<string | null>(null); // Para abrir/cerrar el temario
+  const [openTemario, setOpenTemario] = useState<string | null>(null);
 
   useEffect(() => {
     Papa.parse(CSV_URL, {
@@ -55,7 +55,14 @@ export default function Home() {
       {/* CONTENIDO */}
       <div className="relative z-10 px-20 md:px-32 py-12">
         
-        <header className="text-center mb-16 py-8 border-b-2 border-t-2 border-[#1B3A57] bg-white shadow-lg">
+        {/* --- HERO --- */}
+        <header className="text-center mb-12 py-8 border-b-2 border-t-2 border-[#1B3A57] bg-white shadow-lg">
+          
+          {/* LLAMADOR TOPE */}
+          <div className="bg-[#D4AF37] text-[#1B3A57] text-xs font-bold py-1 px-4 inline-block mb-4 uppercase tracking-widest">
+            🚀 Inscripción abierta - Cupos limitados
+          </div>
+
           <div className="inline-block mb-2 text-6xl">🏛️</div>
           <h1 className={`${playfair.className} text-5xl md:text-6xl font-bold text-[#1B3A57] tracking-wide`}>
             Academia Workfast
@@ -63,11 +70,36 @@ export default function Home() {
           <p className="text-gray-600 mt-2 text-lg font-semibold">Aprende un oficio con rápida salida laboral</p>
         </header>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {/* --- BENEFICIOS (Iconos) --- */}
+        <section className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12 text-center">
+          <div className="bg-white p-4 border border-gray-200 shadow-sm">
+            <span className="text-3xl">⚡</span>
+            <h4 className={`${playfair.className} text-[#1B3A57] font-bold mt-2`}>Salida Rápida</h4>
+            <p className="text-xs text-gray-500">Aprende y trabaja en semanas, no años.</p>
+          </div>
+          <div className="bg-white p-4 border border-gray-200 shadow-sm">
+            <span className="text-3xl">📚</span>
+            <h4 className={`${playfair.className} text-[#1B3A57] font-bold mt-2`}>A Tu Ritmo</h4>
+            <p className="text-xs text-gray-500">Estudia cuando quieras, acceso de por vida.</p>
+          </div>
+          <div className="bg-white p-4 border border-gray-200 shadow-sm">
+            <span className="text-3xl">📜</span>
+            <h4 className={`${playfair.className} text-[#1B3A57] font-bold mt-2`}>Certificado</h4>
+            <p className="text-xs text-gray-500">Avala tus conocimientos al terminar.</p>
+          </div>
+        </section>
+
+        {/* --- GRILLA DE CURSOS --- */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
           {cursos.map((curso) => (
             curso.id && (
-              <div key={curso.id} className="bg-white border border-gray-300 rounded-none shadow-md hover:shadow-xl transition-all flex flex-col">
+              <div key={curso.id} className="bg-white border border-gray-300 rounded-none shadow-md hover:shadow-xl transition-all flex flex-col relative">
                 
+                {/* Badge de oferta */}
+                <div className="absolute top-2 right-2 bg-[#D4AF37] text-[#1B3A57] text-[10px] font-bold px-2 py-1 uppercase z-10">
+                  ¡Oferta!
+                </div>
+
                 <div className="w-full h-2 bg-[#D4AF37]"></div>
                 
                 <div className="p-6 flex-1 flex flex-col">
@@ -99,15 +131,16 @@ export default function Home() {
                   <div className="mb-6 border-t border-gray-200 pt-4 mt-auto">
                     <span className="text-sm text-gray-500 block">Inversión del curso:</span>
                     <span className={`${playfair.className} text-4xl font-bold text-[#1B3A57]`}>$ {curso.precio}</span>
+                    <span className="text-xs text-gray-400 line-through ml-2">$99999</span>
                   </div>
 
                   <a 
                     href={curso.link_pago}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full bg-[#1B3A57] hover:bg-[#152a3d] text-white font-bold py-4 uppercase text-center tracking-widest text-sm transition-colors"
+                    className="w-full bg-[#1B3A57] hover:bg-[#152a3d] text-white font-bold py-4 uppercase text-center tracking-widest text-sm transition-colors shadow-lg"
                   >
-                    Comprar
+                    Comprar Ahora
                   </a>
                 </div>
               </div>
@@ -115,11 +148,47 @@ export default function Home() {
           ))}
         </div>
 
-        <footer className="mt-16 text-center text-gray-500 text-xs pb-8">
-          <p>Academia Workfast © 2024 - Todos los derechos reservados</p>
+        {/* --- SECCIÓN "QUÉ INCLUYE" --- */}
+        <section className="bg-[#1B3A57] text-white p-8 mb-16 text-center">
+          <h2 className={`${playfair.className} text-3xl mb-6`}>¿Qué incluye tu compra?</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+            <div className="p-2">
+              <span className="block text-2xl mb-2">📄</span>
+              PDF de alta calidad
+            </div>
+            <div className="p-2">
+              <span className="block text-2xl mb-2">♾️</span>
+              Acceso de por vida
+            </div>
+            <div className="p-2">
+              <span className="block text-2xl mb-2">💬</span>
+              Soporte por WhatsApp
+            </div>
+            <div className="p-2">
+              <span className="block text-2xl mb-2">🎓</span>
+              Certificado digital
+            </div>
+          </div>
+        </section>
+
+        {/* FOOTER */}
+        <footer className="mt-16 text-center text-gray-500 text-xs pb-8 border-t pt-8">
+          <p>Academia Workfast © 2024 - Todos los derechos reservados.</p>
+          <p className="mt-2">¿Dudas? Escribinos al WhatsApp haciendo clic en el botón verde abajo a la derecha.</p>
         </footer>
 
       </div>
+
+      {/* BOTÓN FLOTANTE WP (Simulado, acordate de cambiar el número) */}
+      <a 
+        href="https://wa.me/542246516868?text=Hola! Quiero info sobre los cursos" 
+        target="_blank" 
+        rel="noopener noreferrer"
+        className="fixed bottom-6 right-6 bg-green-500 hover:bg-green-600 text-white text-4xl w-16 h-16 flex items-center justify-center rounded-full shadow-lg z-50 transition-all hover:scale-110 border-2 border-white/20"
+      >
+        💬
+      </a>
+
     </main>
   );
 }
