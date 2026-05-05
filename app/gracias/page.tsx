@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Playfair_Display, Lato } from 'next/font/google';
 import Papa from 'papaparse';
@@ -16,56 +16,6 @@ type Curso = {
   titulo: string;
   url_pdf: string;
 };
-
-// Componente del Diploma
-function Diploma({ nombre, curso }: { nombre: string, curso: string }) {
-  const diplomaRef = useRef<HTMLDivElement>(null);
-
-  const handleDownload = async () => {
-    if (!diplomaRef.current) return;
-    
-    // Importamos la librería SOLO cuando se hace clic (truco para que no falle Vercel)
-    const html2canvas = (await import('html2canvas')).default;
-    
-    const canvas = await html2canvas(diplomaRef.current, { scale: 2, useCORS: true });
-    const link = document.createElement('a');
-    link.download = `Diploma-${curso}.png`;
-    link.href = canvas.toDataURL();
-    link.click();
-  };
-
-  return (
-    <div className="mt-8">
-      <div 
-        ref={diplomaRef}
-        className="bg-white p-8 border-[8px] border-double border-[#D4AF37] text-center relative overflow-hidden"
-        style={{ width: '600px', maxWidth: '100%', margin: '0 auto' }}
-      >
-        <div className="absolute inset-0 opacity-5" style={{backgroundImage: "url('data:image/svg+xml;utf8,<svg width=\"40\" height=\"40\" viewBox=\"0 0 40 40\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M20 0L40 20L20 40L0 20Z\" fill=\"%23D4AF37\"/></svg>')"}}></div>
-
-        <div className="relative z-10">
-          <h2 className={`${playfair.className} text-xl text-gray-400 uppercase tracking-[0.3em] mb-2`}>Academia Workfast</h2>
-          <div className="text-4xl my-4">🎓</div>
-          <p className="text-gray-600 text-sm uppercase tracking-wider">Certifica que</p>
-          <h1 className={`${playfair.className} text-4xl md:text-5xl text-[#1B3A57] my-4 border-b-2 border-gray-200 pb-2 inline-block px-8`}>
-            {nombre}
-          </h1>
-          <p className="text-gray-600 text-sm uppercase tracking-wider mt-4">ha completado exitosamente el curso de</p>
-          <h2 className={`${playfair.className} text-2xl text-[#D4AF37] font-bold mt-2`}>{curso}</h2>
-          <div className="mt-8 flex justify-between text-xs text-gray-500 px-4">
-            <div><div className="w-16 border-t border-gray-400 mb-1"></div>Fecha</div>
-            <div><div className="w-16 border-t border-gray-400 mb-1"></div>Director</div>
-          </div>
-        </div>
-      </div>
-      <div className="text-center mt-4">
-        <button onClick={handleDownload} className="bg-[#D4AF37] text-white font-bold py-3 px-6 rounded hover:bg-[#b8962e] transition-colors text-sm">
-          📥 Descargar Diploma (Imagen)
-        </button>
-      </div>
-    </div>
-  );
-}
 
 function GraciasContent() {
   const searchParams = useSearchParams();
@@ -107,18 +57,46 @@ function GraciasContent() {
           📄 Descargar Curso (PDF)
         </a>
 
+        {/* SECCIÓN DIPLOMA (Versión segura) */}
         <div className="border-t border-gray-200 pt-8 mt-4">
           <h3 className={`${playfair.className} text-xl font-bold text-[#1B3A57] mb-4`}>Obtené tu Diploma</h3>
+          
           {!mostrarDiploma ? (
             <div className="space-y-3">
               <p className="text-xs text-gray-500">Ingresá tu nombre tal como querés que aparezca.</p>
-              <input type="text" placeholder="Tu Nombre Completo" value={nombreAlumno} onChange={(e) => setNombreAlumno(e.target.value)} className="w-full border border-gray-300 p-2 text-center rounded text-sm focus:border-[#D4AF37] outline-none"/>
-              <button onClick={() => nombreAlumno.length > 2 && setMostrarDiploma(true)} disabled={nombreAlumno.length < 3} className="bg-[#D4AF37] text-white font-bold py-2 px-6 rounded text-sm hover:bg-[#b8962e] transition-colors disabled:opacity-50">
+              <input 
+                type="text" 
+                placeholder="Tu Nombre Completo" 
+                value={nombreAlumno}
+                onChange={(e) => setNombreAlumno(e.target.value)}
+                className="w-full border border-gray-300 p-2 text-center rounded text-sm focus:border-[#D4AF37] outline-none"
+              />
+              <button 
+                onClick={() => nombreAlumno.length > 2 && setMostrarDiploma(true)}
+                disabled={nombreAlumno.length < 3}
+                className="bg-[#D4AF37] text-white font-bold py-2 px-6 rounded text-sm hover:bg-[#b8962e] transition-colors disabled:opacity-50"
+              >
                 Generar Diploma
               </button>
             </div>
           ) : (
-            <Diploma nombre={nombreAlumno} curso={curso.titulo} />
+            <div className="mt-4">
+              {/* Diploma visible directamente */}
+              <div className="bg-white p-6 border-[4px] border-double border-[#D4AF37] text-center relative overflow-hidden shadow-lg">
+                <h2 className={`${playfair.className} text-sm text-gray-400 uppercase tracking-[0.2em] mb-1`}>Academia Workfast</h2>
+                <div className="text-2xl my-2">🎓</div>
+                <p className="text-gray-500 text-xs uppercase">Certifica que</p>
+                <h1 className={`${playfair.className} text-2xl md:text-3xl text-[#1B3A57] my-2 border-b border-gray-200 pb-1 inline-block px-4`}>
+                  {nombreAlumno}
+                </h1>
+                <p className="text-gray-500 text-xs uppercase mt-2">ha completado el curso de</p>
+                <h2 className={`${playfair.className} text-lg text-[#D4AF37] font-bold`}>{curso.titulo}</h2>
+              </div>
+              
+              <p className="text-xs text-gray-400 mt-4 bg-gray-50 p-2 rounded">
+                💡 <strong>Para guardar el diploma:</strong> Hacé clic derecho sobre la imagen &gt; "Guardar imagen como..." o usá la opción "Captura de pantalla" de tu celular.
+              </p>
+            </div>
           )}
         </div>
       </div>
